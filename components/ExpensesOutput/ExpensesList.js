@@ -1,9 +1,14 @@
 import { Text } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
+import ExpenseItem from "./ExpenseItem";
 
 function renderExpeseItem(item) {
     return (
-        <Text>{item.description}</Text>
+        <ExpenseItem
+            description={item.description}
+            date={item.date}
+            amount={item.amount}
+        />
     )
 }
 
