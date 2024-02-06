@@ -1,6 +1,8 @@
 import 'react-native-gesture-handler';
 import { StatusBar } from 'expo-status-bar';
 
+import ExpensesContexProvider from './store/expense-contex';
+
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -9,6 +11,7 @@ import { Ionicons } from '@expo/vector-icons';
 import ManageExpense from './screens/ManageExpense';
 import RecentExpenses from './screens/RecentExpenses';
 import AllExpenses from './screens/AllExpenses';
+import IconButton from './components/UI/IconButton';
 
 import { GlobalStyles } from './constants/style';
 
@@ -17,7 +20,7 @@ const Tab = createBottomTabNavigator();
 
 const ExpensesOverview = () => {
   return (
-    <Tab.Navigator screenOptions={{
+    <Tab.Navigator screenOptions={({ navigation }) => ({
       headerStyle: {
         backgroundColor: GlobalStyles.colors.primary500,
       },
@@ -26,7 +29,8 @@ const ExpensesOverview = () => {
         backgroundColor: GlobalStyles.colors.primary500,
       },
       tabBarActiveTintColor: GlobalStyles.colors.accent500,
-    }}>
+      headerRight: ({ tintColor }) => <IconButton icon="add" size={24} color={tintColor} onPress={() => { navigation.navigate("ManageExpense") }} />
+    })}>
       <Tab.Screen name="RecentExpenses" component={RecentExpenses} options={{
         title: 'Recent Expenses',
         tabBarLabel: "Recent",
@@ -45,14 +49,23 @@ export default function App() {
   return (
     <>
       <StatusBar style="light" />
-      <NavigationContainer>
-        <Stack.Navigator>
-          <Stack.Screen name="ExpensesOverview" component={ExpensesOverview} options={{
-            headerShown: false
-          }} />
-          <Stack.Screen name="ManageExpense" component={ManageExpense} />
-        </Stack.Navigator>
-      </NavigationContainer>
+      <ExpensesContexProvider>
+        <NavigationContainer>
+          <Stack.Navigator screenOptions={{
+            headerStyle: {
+              backgroundColor: GlobalStyles.colors.primary500,
+            },
+            headerTintColor: 'white',
+          }}>
+            <Stack.Screen name="ExpensesOverview" component={ExpensesOverview} options={{
+              headerShown: false
+            }} />
+            <Stack.Screen name="ManageExpense" component={ManageExpense} options={{
+              presentation: "modal",
+            }} />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </ExpensesContexProvider>
     </>
   );
 }
